@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<title>Recent changes in Ghostscript</title>
+<!-- Originally: NEWS -->
+<!--
+	WARNING: do not use Pete Kaiser's emacs function "gs-toc" alone to
+	re-create the table of contents here, because it will replace the
+	hand-edited TOC subheads with a separate subhead for each H2 in
+	the body of the file.  Or if you do, first look at the original
+	TOC to see how to edit it for visual conciseness.
+-->
+<link rel="stylesheet" type="text/css" href="gs.css">
+</head>
+
+<body>
+<!-- [1.0 begin visible header] ============================================ -->
+
+<!-- [1.1 begin headline] ================================================== -->
+
+<h1>Changes in the most recent release of Ghostscript</h1>
+
+<!-- [1.1 end headline] ==================================================== -->
+
+<!-- [1.2 begin table of contents] ========================================= -->
+
+<!-- [1.2 end table of contents] =========================================== -->
+
+<!-- [1.3 begin hint] ====================================================== -->
+
+<p>
+This document is news about the most recent Ghostscript release.  For
+earlier versions, see the history documents:
+
+<blockquote>
+<a href="History9.htm">History of Ghostscript versions 9.n</a><br>
+<a href="History8.htm">History of Ghostscript versions 8.n</a><br>
+<a href="History7.htm">History of Ghostscript versions 7.n</a><br>
+<a href="History6.htm">History of Ghostscript versions 6.n</a><br>
+<a href="History5.htm">History of Ghostscript versions 5.n</a><br>
+<a href="History4.htm">History of Ghostscript versions 4.n</a><br>
+<a href="History3.htm">History of Ghostscript versions 3.n</a><br>
+<a href="History2.htm">History of Ghostscript versions 2.n</a><br>
+<a href="History1.htm">History of Ghostscript versions 1.n</a>
+</blockquote>
+
+<p>For other information, see the <a href="Readme.htm">Ghostscript
+overview</a>.
+
+<!-- [1.3 end hint] ======================================================== -->
+
+<hr>
+
+<!-- [1.0 end visible header] ============================================== -->
+
+<!-- [2.0 begin contents] ================================================== -->
+
+<h2><a name="Version9.18"></a>Version 9.18 (2015-09-23)</h2>
+
+<p>This is the thirteenth full release in the stable 9.x series, and is
+a maintenance release.
+
+<p> Highlights in this release include:
+<ul>
+<li>
+<p>
+A substantial revision of the build system and GhostPDL directory structure,
+meaning the GhostPCL and GhostXPS &quotproducts&quot are now built by the
+Ghostscript build system &quotproper&quot rather than having their own builds
+which called the Ghostscript build system for certain parts of the builds.
+<p>
+Ghostscript-only users should not be affected by this change.
+<p>
+For users of the PCL and XPS interpreters (collectively downloaded as &quotGhostPDL&quot) there
+is a new, &quotflatter&quot directory structure and only one <code>configure</code> and one
+<code>make</code> invocation to build all the products. There are also some executable default name changes
+to bring the PCL and XPS binaries in line with the Ghostscript ones. All executables now end up in
+the &quotbin&quot directory (or build specific variant thereof, e.g. &quotdebugbin&quot). The PCL
+executable, by default, is now &quotgpcl6&quot on Unix like systems and &quotgpcl6win??.exe&quot (where
+&quot??&quot is either &quot32&quot or &quot64&quot). The XPS executable remains &quotgxps&quot on Unix-like
+systems, but similarly becomes &quotgxpswin??.exe&quot on Windows.
+<p>
+Those using scripts or other automated processes will need to take steps to cope with these changes.
+</li>
+<li>
+<p>
+A new method of internally inserting devices into the device chain has been
+developed, named "device subclassing". This allows suitably written devices to
+be more easily and consistently as &quotfilter&quot devices.
+<p>
+The first fruit of this is a new implementation of the &quot-dFirstPage&quot/&quot-dLastPage&quot
+feature which functions a device filter in the Ghostscript graphics library,
+meaning it works consistently with all input languages.
+</li>
+<li>
+The &quotghostpdl.inf&quot file, provided to simplify installing a Postscript
+printer configure to produce output to suit Ghostscript's &quotpdfwrite&quot device
+is now available as a digitally signed version: &quotghostpdl.cat&quot.
+</li>
+<li>
+<p>Plus the usual round of bug fixes, compatibility changes, and incremental improvements.
+</li>
+</ul>
+<p>For a list of open issues, or to report problems,
+please visit <a href="http://bugs.ghostscript.com/">bugs.ghostscript.com</a>.
+
+<h3><a name="9.18_Incompatible_changes"></a>Incompatible changes</h3>
+<p>
+No recorded incompatible changes.
+
+<h3><a name="9.18_changelog"></a>Changelog</h3>
+
+<p>See the <a href="History9.htm">history file</a> for complete log 
+of changes.
+
+<!-- [2.0 end contents] ==================================================== -->
+
+<!-- [3.0 begin visible trailer] =========================================== -->
+<hr>
+
+<p>
+<small>Copyright &copy; 2005-2015 Artifex Software, Inc.
+All rights reserved.</small>
+
+<p>
+This software is provided AS-IS with no warranty, either express or
+implied.
+
+This software is distributed under license and may not be copied, modified
+or distributed except as expressly authorized under the terms of that
+license.  Refer to licensing information at http://www.artifex.com/
+or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
+San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
+
+<p>
+<small>Ghostscript version 9.18, 5 October 2015
+
+<!-- [3.0 end visible trailer] ============================================= -->
+
+</body>
+</html>
