@@ -406,7 +406,7 @@ gswin32c -sOutputFile=ABC%%03d.xyz
 <p>
 As a convenient shorthand you can use the <tt>-o</tt> option followed by the output
 file specification as discussed above. The <tt>-o</tt> option also sets the
-<a href="Interaction_related_parameters"><tt>-dBATCH</tt> and <tt>-dNOPAUSE</tt> options</a>.
+<a href="#Interaction_related_parameters"><tt>-dBATCH</tt> and <tt>-dNOPAUSE</tt> options</a>.
 This is intended to be a quick way to invoke ghostscript to convert one or more
 input files.
 
@@ -2173,6 +2173,11 @@ contains just the word "<code>quit</code>", then
 <code>quit.ps</code> there.  Each argument must be valid PostScript,
 either individual tokens as defined by the <code>token</code> operator,
 or a string containing valid PostScript.
+<p>
+Because Ghostscript must initialize the PostScript environment
+before executing the commands specified by this option it should
+be specified after other setup options.  Specifically this option
+'bind's all operations and sets the systemdict to readonly.
 </dl>
 
 <dl>
@@ -2655,7 +2660,7 @@ of using the normal intelligent substitution algorithm.  Also, in this
 case, the font returned by <code>findfont</code> is the actual font
 named <em>fontname</em>, not a copy of the font with its
 <code>FontName</code> changed to the requested one.
-THIS OPTION SHOULD NOT BE USED WITH HIGH LEVEL DEVICES, such as
+THIS OPTION SHOULD NOT BE USED WITH HIGH LEVEL (VECTOR) DEVICES, such as
 <code>pdfwrite</code>, because it prevents such devices from
 providing the original font names in the output document. The
 font specified (<em>fontname</em>) will be embedded instead,
@@ -3386,6 +3391,9 @@ Ghostscript attempts to find an optimum balance between speed and memory
 consumption, but there are some cases in which you may get a very large
 speedup by telling Ghostscript to use more memory.
 
+Please note that this discussion relates to devices which produce a bitmap format as the output.
+These parameters have no effect on the vector devices, such as pdfwrite.
+
 <ul>
 <li>
 For raster printers and image format (jpeg*, tiff*, png* ...) devices,
@@ -3393,7 +3401,7 @@ performance can be 'tuned' by adjusting some of the parameters related
 to banding (clist) options (refer to: <a href="Language.htm#Banding_parameters">
 Banding Parameters</a>).
 <p>
-All devices may use a display list ("clist") and use banding when processing
+All devices may use a display list ("clist") and use banding when rendering
 PDF 1.4 transparency. This prevents allocation of excessively large amounts of
 memory for the transparency buffer stack. The <code>-dMaxBitmap=</code> option
 is used to control when to use the display list, and the other banding parameters
@@ -3424,7 +3432,7 @@ memory. For example, to allow use of 30Mb of extra RAM use:
 <p>
     <code>-c&nbsp;30000000&nbsp;setvmthreshold&nbsp;-f</code>.
 <p>This can also be useful in processing large documents when using a
-high-level output device (like pdfwrite) that maintains significant internal
+high-level (vector) output device (like pdfwrite) that maintains significant internal
 state.  In fact, the <a href="Language.htm#.setpdfwrite"><tt>.setpdfwrite</tt></a>
 operator used by the ps2pdf script and others sets a vmthreshold value of
 3&nbsp;MB to account for this.
@@ -3532,10 +3540,6 @@ instead of printing a warning and continue, PDF interpreter drops into
 a PostScript error handler that prints detailed information about the problem and
 kills the job.
 </p>
-
-<p>With switching to freetype 2 as the default font renderer in April 2010, we
-added a new switch:<code>-dDisableFAPI=true</code> to revert to the older
-behavior, just in case serious regression happens that cannot be resolved in a timely manner.</p>
 
 <p><p>
 The <code>-Z</code> and <code>-T</code> switches apply only
@@ -3681,7 +3685,7 @@ usage.
 <dt><code>'</code><dd>contexts, create/destroy
 <dt>&nbsp;&nbsp;&nbsp;<code>"</code><dd>contexts, every operation
 <dt><code>^</code><dd>reference counting
-<dt><code>_</code><dd>high-level output
+<dt><code>_</code><dd>high-level (vector) output
 <dt><code>!</code><dd>Postscript operator names (this option is available only
 when Ghostscript is compiled with a predefined macro DEBUG_TRACE_PS_OPERATORS)
 <dt><code>|</code><dd>(reserved for experimental code)
@@ -3775,7 +3779,7 @@ in the table are derived from those, rounded to the nearest 0.1 unit.  A
 guide to international paper sizes can be found at
 
 <blockquote>
-<a href="http://www.twics.com/~eds/paper/index.html">http://www.twics.com/~eds/paper/</a>
+<a href="http://www.edsebooks.com/paper/papersize.html">http://www.edsebooks.com/paper/papersize.html</a>
 </blockquote>
 
 <table cellpadding=0 cellspacing=0>
@@ -4086,7 +4090,13 @@ behavior, just in case serious regression happens that cannot be resolved in a t
 It is intended that this switch will be removed once the FAPI/Freetype implementation has
 proven itself robust and reliable in the "real world".
 
-
+<p>
+<em>
+NOTE: With version 9.18 recently released we have, for some time, regarded FAPI/Freetype as being
+the canonical glyph rendering solution for Ghostscript and associated products, and the non-FAPI
+rendering to be deprecated. As such, the <code>-dDisableFAPI=true</code> option is also considered
+deprecated, and should be expected to be removed shortly after the next release.
+</em>
 </p>
 
 <p>
@@ -4359,7 +4369,7 @@ or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
 San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
 
 <p>
-<small>Ghostscript version 9.18, 5 October 2015
+<small>Ghostscript version 9.19, 23 March 2016
 
 <!-- [3.0 end visible trailer] ============================================= -->
 

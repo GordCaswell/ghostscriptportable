@@ -1,6 +1,6 @@
-Data/
+/Data/**
 
 Desktop.ini
 Thumbs.db
 
-App/AppInfo/Launcher/Debug.nsh
+/App/AppInfo/Launcher/Debug.nsh

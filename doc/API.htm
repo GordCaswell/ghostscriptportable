@@ -72,11 +72,10 @@ is described here.
 
 <p>
 The Ghostscript interpreter can be built as a dynamic link library 
-(DLL) on the Windows or OS/2 platforms, as a shared object on the 
-Linux platform and as a framework on MacOS X.
-With some changes, it could be built as a static library.
-This document describes the Application Programming Interface (API)
-for the Ghostscript interpreter library.  
+(DLL) on Microsoft Windows, as a shared object on the
+Linux, Unix and MacOS X platforms. With some changes, it could be built
+as a static library. This document describes the Application Programming
+Interface (API) for the Ghostscript interpreter library.
 This should not be confused with the 
 <a href="Lib.htm">Ghostscript library</a> which provides a graphics
 library but not the interpreter.
@@ -105,28 +104,15 @@ simultaneously.
 <li>The Linux shared object <code>libgs.so</code>
 can be used by multiple programs simultaneously.
 
-<li>The MacOS X <code>Ghostscript.framework</code> can also be used
-by multiple applications at once.
-</ul>
-
 <p>
 The source for the executable is in <code>dw</code>*.* (Windows),
-<code>dp</code>*.* (OS/2) and  <code>dx</code>*.* (Linux).  
-See these source files for examples of how to use the DLL. A similar
-example for MacOS using the Carbon API is provided in <code>dm</code>*.*.
+<code>dp</code>*.* (OS/2) and  <code>dx</code>*.* (Linux/Unix).
+See these source files for examples of how to use the DLL.
 
 <p>
 The source file <tt>dxmainc.c</tt> can also serve as an example of how to use the 
-framework shared component on MacOS X, providing the same command-line tool it does
-on any linux, bsd or similar operating system. Just change the header includes to 
-use the Ghostscript namespace:
-<blockquote><pre><tt>#include &lt;Ghostscript/ierrors.h&gt;
-#include &lt;Ghostscript/iapi.h&gt;</tt></pre></blockquote>
-and link with:
-<blockquote><pre><tt>cc -o gsc dxmainc.c -framework Ghostscript</tt></pre></blockquote>
-To get a useable executable. <tt>Ghostscript.framework</tt> must be properly
-installed in the search path for this to work.
-
+shared library component on MacOS X, providing the same command-line tool it does
+on any linux, bsd or similar operating system.
 <p>
 At this stage, Ghostscript does not support multiple instances
 of the interpreter within a single process.
@@ -380,7 +366,7 @@ The <code>gsapi_run_*</code> functions are like
 If these functions return &lt;= -100, either quit or a fatal
 error has occured.  You must call <code>gsapi_exit()</code> next.
 The only exception is <code>gsapi_run_string_continue()</code>
-which will return <code>e_NeedInput</code> if all is well.
+which will return <code>gs_error_NeedInput</code> if all is well.
 See below for <a href="#return_codes">return codes</a>.
 <p>
 The address passed in <code>pexit_code</code> will be used to return the 
@@ -390,7 +376,7 @@ errors should be handled through the normal mechanisms within the
 interpreted code. If set to a negative value, the functions will return 
 an error code directly to the caller, bypassing the interpreted 
 language. The interpreted language's error handler is bypassed, regardless of 
-<code>user_errors</code> parameter, for the <code>e_interrupt</code> 
+<code>user_errors</code> parameter, for the <code>gs_error_interrupt</code>
 generated when <a href="#set_poll">the polling callback</a> returns a negative 
 value. A positive <code>user_errors</code> is treated the same as zero.
 <p>
@@ -434,21 +420,21 @@ The <code>gsapi_init_with_args</code>, <code>gsapi_run_*</code> and
 <tr valign=top>	<td align=left>0
 	<td>&nbsp;
 	<td>No errors
-<tr valign=top>	<td align=left>e_Quit
+<tr valign=top>	<td align=left>gs_error_Quit
 	<td>&nbsp;
 	<td>"<code>quit</code>" has been executed.
 	This is not an error.
 	<code>gsapi_exit()</code> must be called next.
-<tr valign=top>	<td align=left>e_interrupt
+<tr valign=top>	<td align=left>gs_error_interrupt
 	<td>&nbsp;
 	<td><a href="#set_poll">The polling callback function</a> 
 	returned a negative value, requesting Ghostscript to abort.
-<tr valign=top>	<td align=left>e_NeedInput
+<tr valign=top>	<td align=left>gs_error_NeedInput
 	<td>&nbsp;
 	<td>More input is needed by
         <code>gsapi_run_string_continue()</code>.
         This is not an error.
-<tr valign=top>	<td align=left>e_Info
+<tr valign=top>	<td align=left>gs_error_Info
 	<td>&nbsp;
 	<td>"<code>gs -h</code>" has been executed. 
 	This is not an error.
@@ -456,7 +442,7 @@ The <code>gsapi_init_with_args</code>, <code>gsapi_run_*</code> and
 <tr valign=top>	<td align=left>&lt; 0
 	<td>&nbsp;
 	<td>Error
-<tr valign=top>	<td align=left>&lt;= -100
+<tr valign=top>	<td align=left>&lt;= gs_error_Fatal
 	<td>&nbsp;
 	<td>Fatal error.
 <code>gsapi_exit()</code> must be called next.
@@ -533,12 +519,12 @@ int main(int argc, char *argv[])
     if (code == 0)
         code = gsapi_init_with_args(minst, gsargc, gsargv);
     code1 = gsapi_exit(minst);
-    if ((code == 0) || (code == e_Quit))
+    if ((code == 0) || (code == gs_error_Quit))
 	code = code1;
 
     gsapi_delete_instance(minst);
 
-    if ((code == 0) || (code == e_Quit))
+    if ((code == 0) || (code == gs_error_Quit))
 	return 0;
     return 1;
 }
@@ -614,12 +600,12 @@ int main(int argc, char *argv[])
     if (code == 0)
 	code = gsapi_run_string(minst, start_string, 0, &amp;exit_code);
     code1 = gsapi_exit(minst);
-    if ((code == 0) || (code == e_Quit))
+    if ((code == 0) || (code == gs_error_Quit))
 	code = code1;
 
     gsapi_delete_instance(minst);
 
-    if ((code == 0) || (code == e_Quit))
+    if ((code == 0) || (code == gs_error_Quit))
 	return 0;
     return 1;
 }
@@ -653,12 +639,12 @@ int main(int argc, char *argv[])
     }
 
     code1 = gsapi_exit(minst);
-    if ((code == 0) || (code == e_Quit))
+    if ((code == 0) || (code == gs_error_Quit))
 	code = code1;
 
     gsapi_delete_instance(minst);
 
-    if ((code == 0) || (code == e_Quit))
+    if ((code == 0) || (code == gs_error_Quit))
 	return 0;
     return 1;
 }
@@ -841,7 +827,7 @@ or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
 San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
 
 <p>
-<small>Ghostscript version 9.18, 5 October 2015
+<small>Ghostscript version 9.19, 23 March 2016
 
 
 <!-- [3.0 end visible trailer] ============================================= -->
