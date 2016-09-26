@@ -241,9 +241,14 @@ at lower resolution produce less consistent text rendering. Use with
 caution.
 
 <dt><code>-dCompressFonts=</code><em>boolean</em>
-<dd>Defines whether <code>ps2pdf</code> will compress embedded fonts in
+<dd>Defines whether <code>pdfwrite</code> will compress embedded fonts in
 the output.  The default value is <code>true</code>; the
-<code>false</code> setting is intended only for debugging.
+<code>false</code> setting is intended only for debugging as it will result in larger output.
+
+<dt><code>-dCompressStreams=</code><em>boolean</em>
+<dd>Defines whether <code>pdfwrite</code> will compress streams other than those in fonts or pages in
+the output.  The default value is <code>true</code>; the
+<code>false</code> setting is intended only for debugging as it will result in larger output.
 
 </dl>
 <h4><a name="distillerparams"></a>Distiller Parameters</h4>
@@ -510,10 +515,7 @@ bugs in this initial implementation and so the following switch is available.
 
 <dl>
 <dt><code>-dPDFUseOldCMS=</code><em>boolean</em>
-<dd>Defaults to false, when true this uses the old system for color conversions.
-</dl>
-<p>If you do encounter any problems with the new color conversion code, please do open a bug report. This switch
-is temporary and will be removed in future releases, do not rely on its availability.</p>
+<dd>The old (non-ICC) colour management code has now been removed and this switch no longer has any effect.</dd>
 <p>
 The <code>ColorConversionStrategy</code> switch can now be set to <code>LeaveColorUnchanged</code>, <code>Gray</code>, <code>RGB</code>, <code>CMYK</code> or
 <code>UseDeviceIndependentColor</code>. Note that, particularly for ps2write, <code>LeaveColorUnchanged</code> may still need to convert
@@ -554,10 +556,11 @@ using Ghostscript directly but cannot be set in <code>ps2pdf</code>.
 See <a href="#Limitations">Limitations</a> below.
 
 <p>
-Ghostscript passes the orientation values from DSC comments to
+Ghostscript passes the orientation values from DSC comments to the
 <code>pdfwrite</code> driver, and these are compared with the
-auto-rotate heuristic. If they are different then the auto-rotate
-value will be used. To use the DSC comment instead select AutoRotatePages=/None
+auto-rotate heuristic. If they are different then the DSC value will be used preferentially.
+If the heuristic is to be preferred over the DSC comments then comment parsing
+can be disabled by setting <code>-dParseDSCComments=false</code>.
 <p>
 
 <hr>
@@ -701,8 +704,25 @@ reorder the output PDF file to conform to the Adobe 'linearised' PDF specificati
 The Acrobat user interface refers to this as 'Optimised for Fast Web Viewing'.
 Note that this will cause the conversion to PDF to be slightly slower and will
 usually result in a slightly larger PDF file.</dd>
+<dd>This option is incompatible with producing an encrypted (password protected) PDF file.</dd>
 </dt>
 
+<dt><code>-dPDFDontUseFontObjectNum</code>
+<dd>Certain authoring tools produce PDF files containing subset fonts where the choice of
+the subset prefix is sub-optimal, either sequentail or otherwise not based on the font content.
+This is not a problem when dealing with a single PDF file, as the PDF object number of the font is
+guaranteed unique in the file, so the correct font will always be used. However, if we are
+supplied with two or more PDF files, we have seen cases where the font names are not unique
+(poor subset prefix selection), which can lead to Ghostscript deciding that two different
+fonts are in fact the same, and causing incorrect output with the pdfwrite family of devices.
+A recent change in the PDF interpreter (and the pdfwrite device) now creates a XUID for each font, based on the input
+filename and the PDF object number, whch makes it quite unlikely that ths situation can now arise.
+However, certain poorly written PDF files contain multiple copies of the same font, and now that
+we consider fonts with differing numbers to be different fonts, pdfwrite emits these fonts
+multple times, just as the input did. This can lead to a small increase in the size of the final
+PDF file (but no other problems). If this should happen, and is important to you, you can use this switch to disable the
+use of the object number (and filename) in determining the uniqueness of fonts.</dd>
+</dt>
 <p>
 The following options are useful for creating PDF 1.2 files:
 <p>
@@ -1320,7 +1340,7 @@ or contact Artifex Software, Inc.,  7 Mt. Lassen Drive - Suite A-134,
 San Rafael, CA  94903, U.S.A., +1(415)492-9861, for further information.
 
 <p>
-<small>Ghostscript version 9.19, 23 March 2016
+<small>Ghostscript version 9.20, 26 September 2016
 
 <!-- [3.0 end visible trailer] ============================================= -->
 
